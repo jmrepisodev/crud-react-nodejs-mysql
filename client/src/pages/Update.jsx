@@ -1,9 +1,14 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 const Update = () => {
-const [book, setBook] = useState({
+
+  const {id} = useParams();
+  //const bookId = location.pathname.split("/")[2];
+
+  const [book, setBook] = useState({
     titulo: "",
     autor: "",
     editorial: "",
@@ -14,8 +19,18 @@ const [book, setBook] = useState({
   const location = useLocation();
   const navigate = useNavigate();
 
-  const bookId = location.pathname.split("/")[2];
-
+  useEffect(() => {
+     axios.get(`http://localhost:8800/libros/${id}`)
+     .then((response)=>{
+        console.log(response);
+        setBook(response.data[0]);
+     })
+     .catch((error)=>{
+        console.log(error);
+     })
+         
+  }, []);
+  
   const handleChange = (event) => {
     //const { name, value } = event.target;
     const name = event.target.name;
@@ -27,7 +42,7 @@ const [book, setBook] = useState({
     e.preventDefault();
 
     try {
-      await axios.put(`http://localhost:8800/libros/${bookId}`, book);
+      await axios.put(`http://localhost:8800/libros/${id}`, book);
       navigate("/");
     } catch (error) {
       console.log(error);

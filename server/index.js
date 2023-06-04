@@ -1,3 +1,4 @@
+// express, mysql, cors y nodemon
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
@@ -23,6 +24,18 @@ app.get("/", (req, res) => {
 app.get("/libros", (req, res) => {
   const q = "SELECT * FROM libros";
   db.query(q, (err, data) => {
+    if (err) {
+      console.log(err);
+      return res.json(err);
+    }
+    return res.json(data);
+  });
+});
+
+app.get("/libros/:id", (req, res) => {
+  const q = "SELECT * FROM libros WHERE id=?";
+  const id=req.params.id;
+  db.query(q, [id], (err, data) => {
     if (err) {
       console.log(err);
       return res.json(err);
@@ -70,7 +83,7 @@ app.put("/libros/:id", (req, res) => {
     req.body.precio,
   ];
 
-  db.query(q, [...values,bookId], (err, data) => {
+  db.query(q, [...values, bookId], (err, data) => {
     if (err) return res.send(err);
     return res.json(data);
   });
